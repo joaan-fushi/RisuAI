@@ -277,6 +277,7 @@ export function setDatabase(data:Database){
     }]
     data.classicMaxWidth ??= false
     data.ooba ??= cloneDeep(defaultOoba)
+    data.kobold ??= cloneDeep(defaultKobold)
     data.ainconfig ??= cloneDeep(defaultAIN)
     data.openrouterKey ??= ''
     data.openrouterRequestModel ??= 'openai/gpt-3.5-turbo'
@@ -425,6 +426,7 @@ export interface botPreset{
     openrouterRequestModel?:string
     proxyKey?:string
     ooba: OobaSettings
+    kobold: KoboldSettings
     ainconfig: AINsettings
     koboldURL?: string
 }
@@ -555,6 +557,7 @@ export interface Database{
     hypaMemory:boolean
     proxyRequestModel:string
     ooba:OobaSettings
+    kobold:KoboldSettings
     ainconfig: AINsettings
     personaPrompt:string
     openrouterRequestModel:string
@@ -658,6 +661,25 @@ interface OobaSettings{
     }
 }
 
+interface KoboldSettings {
+    seed: number,
+    prompt: string,
+    max_context_length: number,
+    max_length: number,
+    temperature: number,
+    top_k: number,
+    top_a: number,
+    top_p: number,
+    typical_p: number,
+    tfs: number,
+    rep_pen: number,
+    rep_pen_range: number,
+    mirostat: number,
+    mirostat_eta: number,
+    mirostat_tau: number,
+    stop_sequence: string[],
+    stream_sse: boolean,
+}
 
 export const saveImage = saveImageGlobal
 
@@ -706,6 +728,28 @@ export const defaultOoba:OobaSettings = {
     }
 }
 
+export const defaultKobold: KoboldSettings = {
+    seed: -1,
+    prompt: '',
+    max_context_length: 0,
+    max_length: 50,
+    temperature: 0.8,
+    top_k: 120,
+    top_a: 0.0,
+    top_p: 0.85,
+    typical_p: 1.0,
+    tfs: 1.0,
+    rep_pen: 1.1,
+    rep_pen_range: 128,
+    mirostat: 0,
+    mirostat_eta: 0.1,
+    mirostat_tau: 5.0,
+    stop_sequence: [],
+    stream_sse: false,
+  };
+  
+
+
 
 export const presetTemplate:botPreset = {
     name: "New Preset",
@@ -730,6 +774,7 @@ export const presetTemplate:botPreset = {
     proxyKey: '',
     bias: [],
     ooba: cloneDeep(defaultOoba),
+    kobold: cloneDeep(defaultKobold),
     ainconfig: cloneDeep(defaultAIN)
 }
 
@@ -805,6 +850,7 @@ export function saveCurrentPreset(){
         koboldURL: db.koboldURL,
         proxyKey: db.proxyKey,
         ooba: cloneDeep(db.ooba),
+        kobold: cloneDeep(db.kobold),
         ainconfig: cloneDeep(db.ainconfig),
         proxyRequestModel: db.proxyRequestModel,
         openrouterRequestModel: db.openrouterRequestModel
@@ -857,6 +903,7 @@ export function setPreset(db:Database, newPres: botPreset){
     db.bias = newPres.bias ?? db.bias
     db.koboldURL = newPres.koboldURL ?? db.koboldURL
     db.proxyKey = newPres.proxyKey ?? db.proxyKey
+    db.kobold = cloneDeep(newPres.kobold ?? db.kobold)
     db.ooba = cloneDeep(newPres.ooba ?? db.ooba)
     db.ainconfig = cloneDeep(newPres.ainconfig ?? db.ainconfig)
     db.openrouterRequestModel = newPres.openrouterRequestModel ?? db.openrouterRequestModel
